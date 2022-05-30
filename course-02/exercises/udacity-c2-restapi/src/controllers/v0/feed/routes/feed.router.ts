@@ -13,18 +13,51 @@ router.get('/', async (req: Request, res: Response) => {
                 item.url = AWS.getGetSignedUrl(item.url);
             }
     });
-    res.send(items);
+    res.status(200).send(items);
 });
 
 //@TODO
 //Add an endpoint to GET a specific resource by Primary Key
 
+router.get('/:id', 
+async (req: Request, res: Response) => {
+    let { id } = req.params;
+    if(!id) {
+        return res.status(400).send("Error, id required")
+    }
+    const item: FeedItem = await FeedItem.findByPk(id);
+    return res.status(200).send(item)
+})
+
 // update a specific resource
 router.patch('/:id', 
     requireAuth, 
     async (req: Request, res: Response) => {
-        //@TODO try it yourself
-        res.status(500).send("not implemented")
+    let { id } = req.params;
+    let { caption, url } = req.body;
+    if(!id){
+        return res.status(400).send("Error, id required")
+    }
+    if(!caption && !url) {
+        return res.status(400).send("Error, caption or url is required")
+    }
+    if(!url){
+        const item: FeedItem = await FeedItem.findByPk(id);
+        item.caption = caption;
+        await item.save()
+        return res.status(200).send(item);
+    }
+    if(!caption){
+        const item: FeedItem = await FeedItem.findByPk(id);
+        item.url = url;
+        await item.save()
+        return res.status(200).send(item);
+    }
+    const item: FeedItem = await FeedItem.findByPk(id);
+    item.caption = caption;
+    item.url = url;
+    await item.save()
+    return res.status(200).send(item);
 });
 
 
