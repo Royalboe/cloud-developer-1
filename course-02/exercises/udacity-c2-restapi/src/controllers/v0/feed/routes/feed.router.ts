@@ -35,29 +35,32 @@ router.patch('/:id',
     async (req: Request, res: Response) => {
     let { id } = req.params;
     let { caption, url } = req.body;
-    if(!id){
-        return res.status(400).send("Error, id required")
+    if(!id || !url || !caption){
+        return res.status(400).send("Error, id, caption or url is required")
     }
-    if(!caption && !url) {
-        return res.status(400).send("Error, caption or url is required")
-    }
-    if(!url){
-        const item: FeedItem = await FeedItem.findByPk(id);
-        item.caption = caption;
-        await item.save()
-        return res.status(200).send(item);
-    }
-    if(!caption){
-        const item: FeedItem = await FeedItem.findByPk(id);
-        item.url = url;
-        await item.save()
-        return res.status(200).send(item);
-    }
+    // if(!id){
+    //     return res.status(400).send("Error, id required")
+    // }
+    // if(!caption && !url) {
+    //     return res.status(400).send("Error, caption or url is required")
+    // }
+    // if(!url){
+    //     const item: FeedItem = await FeedItem.findByPk(id);
+    //     item.caption = caption;
+    //     await item.save()
+    //     return res.status(200).send(item);
+    // }
+    // if(!caption){
+    //     const item: FeedItem = await FeedItem.findByPk(id);
+    //     item.url = url;
+    //     await item.save()
+    //     return res.status(200).send(item);
+    // }
     const item: FeedItem = await FeedItem.findByPk(id);
-    item.caption = caption;
-    item.url = url;
-    await item.save()
-    return res.status(200).send(item);
+    const updateItem: FeedItem = await item.update(req.body)
+    // item.caption = caption;
+    // item.url = url;
+    return res.status(200).send(updateItem);
 });
 
 
