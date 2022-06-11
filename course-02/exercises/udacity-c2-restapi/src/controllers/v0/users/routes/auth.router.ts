@@ -110,9 +110,9 @@ router.post('/', async (req: Request, res: Response) => {
 
     const password_hash = await generatePassword(plainTextPassword);
 
-    const newUser = await new User({
-        email: email,
-        password_hash: password_hash
+    const newUser = await User.build({
+        "email": email,
+        "password_hash": password_hash
     });
 
     let savedUser;
